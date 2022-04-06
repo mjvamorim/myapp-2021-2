@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomePage from '../components/HomePage'
-import UserCrud from '../components/UserCrud'
+import HomePage from '../pages/HomePage'
+import UserCrud from '../pages/UserCrud'
 
 
 Vue.use(VueRouter)
