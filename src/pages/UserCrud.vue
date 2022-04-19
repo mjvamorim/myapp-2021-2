@@ -9,6 +9,14 @@
               :search="search"
               sort-by="id"
               class="elavation-1">
+               <template v-slot:top>
+           <v-text-field
+              v-model="search"
+              label="Search"
+              class="mx-4"
+            ></v-text-field>
+          </template>
+
            ##Formulario
           <template v-slot:top>
             <v-toolbar flat>
@@ -72,7 +80,13 @@
             </v-toolbar>
           </template>
           ##Fim Form
-           </v-data-table>
+          <template v-slot:[`item.actions`]="{ item }">
+            <v-icon small class="mr-2" @click="alterar(item)">
+              mdi-pencil
+            </v-icon>
+            <v-icon small @click="apagar(item)"> mdi-delete </v-icon>
+          </template>
+        </v-data-table>
       </v-col>
     </v-row>
   </v-container>
@@ -98,6 +112,7 @@ export default {
   }),
   methods: {
     inicializa() {
+      this.dialog = false;
       axios.get("http://localhost:3000/users")
         .then((response) => {
           this.users = response.data
@@ -120,8 +135,32 @@ export default {
             this.users.push(this.editedItem);
             this.close();
           })
+      }
+      else { //alterar
+        axios
+          .put("http://localhost:3000/users/"+this.editedIndex, this.editedItem)
+          .then((response) => {
+            console.log(response);
+            this.inicializa();
+          })
 
       }
+    },
+    alterar(item){
+      this.editedIndex = item.id;
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
+    },
+    apagar(item) {
+      this.editedIndex = item.id;
+      confirm("Deseja Apagar?") &&
+      axios
+        .delete("http://localhost:3000/users/"+this.editedIndex)
+        .then((response) => {
+          console.log(response);
+          this.inicializa();
+        })
+      
     }
   },
   created() {
